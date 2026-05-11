@@ -527,7 +527,8 @@ Ctrl+Enter to send">What is machine learning?</textarea>
 function toIST(utcStr) {
   if (!utcStr) return '—';
   try {
-    const d = new Date(utcStr.endsWith('Z') ? utcStr : utcStr + 'Z');
+    const d = new Date(utcStr);
+    if (isNaN(d.getTime())) return utcStr.slice(11, 19);
     return d.toLocaleTimeString('en-IN', {
       timeZone: 'Asia/Kolkata',
       hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false

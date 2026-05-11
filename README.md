@@ -1,5 +1,6 @@
 # Custos
 
+[![Live API](https://img.shields.io/badge/API-custos--lqtf.onrender.com-gold?logo=render)](https://custos-lqtf.onrender.com/docs)
 [![Tests](https://github.com/OMCHOKSI108/custos/actions/workflows/test.yml/badge.svg)](https://github.com/OMCHOKSI108/custos/actions)
 [![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-green.svg)](https://fastapi.tiangolo.com/)
@@ -7,7 +8,7 @@
 
 An intelligent LLM proxy that reduces Gemini API costs through smart routing, dual-layer semantic caching, budget enforcement, and rate limiting.
 
-**Live API:** `https://custos.onrender.com/docs`
+**Live API:** `https://custos-lqtf.onrender.com/docs`
 
 ---
 
@@ -127,6 +128,180 @@ python -m pytest tests/ -v
 
 ---
 
+## Quick Start Flow
+
+```mermaid
+flowchart LR
+    A["You have an app<br/>that needs LLM"] --> B{"Which way?"}
+    B -->|"No server setup"| C["Use Hosted API<br/>custos-lqtf.onrender.com"]
+    B -->|"Self-host"| D["Run your own server<br/>uvicorn app.main:app"]
+    B -->|"Import directly"| E["Install as package<br/>from app import Custos"]
+    C --> F["Send POST /chat<br/>with query + user_id"]
+    D --> F
+    E --> G["client.query('...')"]
+    F --> H["Get response with<br/>cost, model, cache metadata"]
+    G --> H
+```
+
+---
+
+## Integration
+
+You can integrate Custos into your project in several ways.
+
+### Option 1: Use the Hosted API (Zero Setup)
+
+The live API is deployed at `https://custos-lqtf.onrender.com`. Just send HTTP requests from any language.
+
+```python
+import requests
+
+resp = requests.post(
+    "https://custos-lqtf.onrender.com/chat",
+    json={"query": "What is Python?", "user_id": "user_1"},
+    timeout=60,
+).json()
+
+print(resp["response"])
+print("Cost:", resp["cost_usd"], "| Model:", resp["model"])
+```
+
+```javascript
+const resp = await fetch("https://custos-lqtf.onrender.com/chat", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ query: "Explain ML", user_id: "dev" }),
+});
+const data = await resp.json();
+console.log(data.response, data.cost_usd);
+```
+
+```bash
+curl -X POST https://custos-lqtf.onrender.com/chat \
+  -H "Content-Type: application/json" \
+  -d '{"query":"Explain transformers","user_id":"dev"}'
+```
+
+**Note:** Render free tier sleeps after 15 minutes of inactivity. The first request after idle takes ~30 seconds to wake up, then runs at full speed.
+
+### Option 2: As a Python Package (Direct Import)
+
+Clone or copy the `app/` folder into your project, then import the `Custos` client class.
+
+```python
+from app import Custos
+
+client = Custos(
+    gemini_api_key="AIzaSy...",
+    provider="gemini",
+    daily_budget=10.0,
+    hourly_budget=2.0,
+    rate_limit=100,
+)
+
+response = client.query(
+    query="What is Python?",
+    user_id="user_1",
+)
+print(response["response"])
+print("Model used:", response["model"])
+print("Cost:", response["cost_usd"])
+print("Cache hit:", response["cache_hit"])
+```
+
+Switch providers per-query:
+
+```python
+response = client.query("Explain ML", provider="groq")
+response = client.query("Explain ML", provider="gemini")
+```
+
+Access analytics and cache control:
+
+```python
+stats = client.stats()
+print("Total requests:", stats["analytics"]["total_requests"])
+print("Cache hit rate:", stats["analytics"]["cache_hit_rate_pct"], "%")
+
+client.clear_cache()
+```
+
+### Option 3: As a Proxy Server (Self-Hosted)
+
+Run Custos as a standalone service and send HTTP requests from any language.
+
+```bash
+# Start the server
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+```python
+import requests
+
+response = requests.post(
+    "http://localhost:8000/chat",
+    json={
+        "query": "What is machine learning?",
+        "user_id": "my_app_user",
+    },
+).json()
+
+print(response["response"])
+print("Cost:", response["cost_usd"])
+```
+
+```javascript
+// JavaScript / Node.js
+const response = await fetch("http://localhost:8000/chat", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ query: "What is Python?", user_id: "user_1" }),
+});
+const data = await response.json();
+console.log(data.response, data.cost_usd);
+```
+
+```bash
+# curl
+curl -X POST http://localhost:8000/chat \
+  -H "Content-Type: application/json" \
+  -d '{"query":"Explain transformers","user_id":"user_1"}'
+```
+
+### Option 4: As a Docker Service
+
+```dockerfile
+FROM python:3.12-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+COPY . .
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+```
+
+```bash
+docker build -t custos .
+docker run -d -p 8000:8000 \
+  -e GEMINI_API_KEY=your_key \
+  -e MOCK_MODE=false \
+  custos
+```
+
+### Environment Variables
+
+| Variable | Default | Description |
+|---|---|---|
+| GEMINI_API_KEY | "" | Google Gemini API key |
+| GROQ_API_KEY | "" | Groq API key (alternative provider) |
+| LLM_PROVIDER | "gemini" | Default provider: "gemini" or "groq" |
+| MOCK_MODE | "true" | Set "false" to use real API calls |
+| DAILY_BUDGET_USD | 10.0 | Maximum daily spend |
+| HOURLY_BUDGET_USD | 2.0 | Maximum hourly spend |
+| RATE_LIMIT_PER_HOUR | 100 | Max requests per user per hour |
+| CACHE_TTL_SECONDS | 3600 | Cache expiration time |
+
+---
+
 ## Screenshots
 
 **API Documentation** — Interactive Swagger UI at /docs
@@ -136,6 +311,10 @@ python -m pytest tests/ -v
 **Live Dashboard** — Real-time monitoring with cache stats, budget tracking, and latency metrics
 
 ![Custos Dashboard](docs/Dashboard.png)
+
+**Request History** — Detailed log of all queries with timestamps, costs, and caching status
+
+![Request History](docs/history.png)
 
 **Query Response** — Example output showing cost breakdown, model selection, and caching status
 
