@@ -1,0 +1,30 @@
+# Virtual environment
+venv/
+.venv/
+
+# Environment variables
+.env
+.env.*
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Pytest
+.pytest_cache/
+
+# Databases
+*.db
+*.sqlite
+
+# Logs
+logs/
+*.log
+
+# OS junk
+.DS_Store
+
+node_modules/
+
+# Lint cache
+.ruff_cache/
