@@ -128,19 +128,27 @@ python -m pytest tests/ -v
 
 ---
 
-## Quick Start Flow
+## How It Works
 
 ```mermaid
 flowchart LR
-    A["You have an app<br/>that needs LLM"] --> B{"Which way?"}
-    B -->|"No server setup"| C["Use Hosted API<br/>custos-lqtf.onrender.com"]
-    B -->|"Self-host"| D["Run your own server<br/>uvicorn app.main:app"]
-    B -->|"Import directly"| E["Install as package<br/>from app import Custos"]
-    C --> F["Send POST /chat<br/>with query + user_id"]
-    D --> F
-    E --> G["client.query('...')"]
-    F --> H["Get response with<br/>cost, model, cache metadata"]
-    G --> H
+    U["You have an existing project<br/>with LLM costs going high"] --> G["You find Custos on GitHub<br/>OMCHOKSI108/custos"]
+    G --> K{"Choose your path"}
+    K -->|"Zero setup"| A["Use our hosted API<br/>custos-lqtf.onrender.com"]
+    K -->|"Self-host"| B["Deploy your own server<br/>with your API keys"]
+    K -->|"Import in code"| C["pip install + import Custos<br/>in your Python project"]
+    A --> D["Send POST /chat<br/>with query + user_id"]
+    B --> D
+    C --> E["client = Custos(api_key)<br/>client.query('...')"]
+    D --> F["Custos routes smartly<br/>cheap model for simple queries"]
+    E --> F
+    F --> H["You save ~60% on LLM costs<br/>+ get caching + budget control"]
+    H --> I["You are impressed<br/>and tell others about Custos"]
+    
+    style U fill:#1e3a5f,stroke:#f59e0b,color:#fff
+    style G fill:#1e3a5f,stroke:#f59e0b,color:#fff
+    style H fill:#1a4731,stroke:#34d399,color:#fff
+    style I fill:#1a4731,stroke:#34d399,color:#fff
 ```
 
 ---
