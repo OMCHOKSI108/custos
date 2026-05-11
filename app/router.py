@@ -175,6 +175,12 @@ class LLMRouter:
         else:
             model = select_model(complexity_score)
 
+        if active_provider == "groq":
+            if "pro" in model:
+                model = groq.GROQ_MODEL_EXPENSIVE
+            else:
+                model = groq.GROQ_MODEL_CHEAP
+
         cached = self.exact_cache.get(query, model)
         if cached:
             latency_ms = (time.time() - start_time) * 1000

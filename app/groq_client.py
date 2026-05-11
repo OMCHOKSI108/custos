@@ -16,14 +16,15 @@ Get an API key: https://console.groq.com/keys
 import time
 from typing import Dict, Optional
 
-GROQ_MODEL_CHEAP = "mixtral-8x7b-32768"
+GROQ_MODEL_CHEAP = "llama-3.1-8b-instant"
 GROQ_MODEL_EXPENSIVE = "llama-3.3-70b-versatile"
 
 # Cost per 1M tokens (USD) for common Groq models
 GROQ_MODEL_COSTS = {
-    "mixtral-8x7b-32768": {"input": 0.24, "output": 0.24},
-    "llama-3.3-70b-versatile": {"input": 0.59, "output": 0.79},
     "llama-3.1-8b-instant": {"input": 0.05, "output": 0.08},
+    "llama-3.3-70b-versatile": {"input": 0.59, "output": 0.79},
+    "llama-3.1-70b-versatile": {"input": 0.59, "output": 0.79},
+    "mixtral-8x7b-32768": {"input": 0.24, "output": 0.24},
     "gemma2-9b-it": {"input": 0.20, "output": 0.20},
 }
 
