@@ -117,7 +117,6 @@ uvicorn app.main:app --reload
 | /cache | DELETE | Clear both exact and semantic caches |
 
 ---
-
 ## Testing
 
 The test suite covers 73 tests across 6 modules using pytest.
@@ -125,6 +124,22 @@ The test suite covers 73 tests across 6 modules using pytest.
 ```bash
 python -m pytest tests/ -v
 ```
+
+---
+
+## Screenshots
+
+**API Documentation** — Interactive Swagger UI at /docs
+
+![Swagger API Documentation](docs/swagger.png)
+
+**Live Dashboard** — Real-time monitoring with cache stats, budget tracking, and latency metrics
+
+![Custos Dashboard](docs/Dashboard.png)
+
+**Query Response** — Example output showing cost breakdown, model selection, and caching status
+
+![Sample Output](docs/Output1.png)
 
 ---
 

@@ -10,22 +10,24 @@
    DESIGN TOKENS
 ═══════════════════════════════════════════════════════ */
 :root {
-  --bg:        #0d1117;
-  --surface:   #161b22;
-  --surface2:  #21262d;
-  --surface3:  #2d333b;
-  --border:    #30363d;
-  --border2:   #444c56;
-  --blue:      #58a6ff;
-  --green:     #3fb950;
-  --yellow:    #d29922;
-  --orange:    #f0883e;
-  --red:       #f85149;
-  --purple:    #bc8cff;
-  --teal:      #39d353;
-  --text:      #e6edf3;
-  --muted:     #8b949e;
-  --muted2:    #6e7681;
+  --bg:        #0c0f1a;
+  --surface:   #141829;
+  --surface2:  #1c2238;
+  --surface3:  #252d4a;
+  --border:    #2a3250;
+  --border2:   #3a4468;
+  --accent:    #f59e0b;
+  --accent2:   #d97706;
+  --blue:      #60a5fa;
+  --green:     #34d399;
+  --yellow:    #fbbf24;
+  --orange:    #fb923c;
+  --red:       #f87171;
+  --purple:    #a78bfa;
+  --teal:      #2dd4bf;
+  --text:      #f1f5f9;
+  --muted:     #94a3b8;
+  --muted2:    #64748b;
   --r:         8px;
   --r-lg:      12px;
 }
@@ -55,7 +57,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .live-dot.pulse{animation:pulse 2s ease-in-out infinite}
 .live-dot.red{background:var(--red);animation:none}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
-.tag{background:var(--blue);color:#0d1117;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700}
+.tag{background:var(--accent);color:#0c0f1a;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700}
 .mock-banner{
   background:rgba(210,153,34,.12);border:1px solid rgba(210,153,34,.4);
   border-radius:6px;padding:4px 12px;font-size:12px;color:var(--yellow);font-weight:600;
@@ -100,7 +102,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
   content:'';position:absolute;top:0;left:0;right:0;height:2px;
   border-radius:var(--r-lg) var(--r-lg) 0 0;
 }
-.kpi-card.blue::before{background:var(--blue)}
+.kpi-card.blue::before{background:var(--accent)}
 .kpi-card.green::before{background:var(--green)}
 .kpi-card.purple::before{background:var(--purple)}
 .kpi-card.yellow::before{background:var(--yellow)}
@@ -112,7 +114,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .kpi-delta{font-size:11px;font-weight:600}
 .kpi-delta.up{color:var(--green)}
 .kpi-delta.down{color:var(--red)}
-.col-blue{color:var(--blue)}
+.col-blue{color:var(--accent)}
 .col-green{color:var(--green)}
 .col-purple{color:var(--purple)}
 .col-yellow{color:var(--yellow)}
@@ -146,23 +148,23 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
   border-radius:6px;padding:4px 10px;font-size:12px;font-weight:500;cursor:pointer;
   transition:all .15s;
 }
-.btn-example:hover{border-color:var(--blue);color:var(--blue);background:rgba(88,166,255,.08)}
+.btn-example:hover{border-color:var(--accent);color:var(--accent);background:rgba(245,158,11,.08)}
 .query-area{
   width:100%;background:var(--surface2);border:1px solid var(--border);
   color:var(--text);border-radius:var(--r);padding:10px 14px;
   font-size:14px;font-family:inherit;resize:vertical;min-height:72px;
   transition:border-color .15s;
 }
-.query-area:focus{outline:none;border-color:var(--blue)}
+.query-area:focus{outline:none;border-color:var(--accent)}
 .query-controls{display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap}
 .inp{
   background:var(--surface2);border:1px solid var(--border);color:var(--text);
   padding:7px 12px;border-radius:var(--r);font-size:13px;transition:border-color .15s;
 }
-.inp:focus{outline:none;border-color:var(--blue)}
+.inp:focus{outline:none;border-color:var(--accent)}
 select.inp{cursor:pointer}
 .btn{
-  background:var(--blue);color:#0d1117;border:none;
+  background:var(--accent);color:#0c0f1a;border:none;
   padding:8px 18px;border-radius:var(--r);font-size:13px;font-weight:700;
   cursor:pointer;transition:opacity .15s,transform .1s;white-space:nowrap;
 }
@@ -170,7 +172,7 @@ select.inp{cursor:pointer}
 .btn:active{transform:scale(.97)}
 .btn:disabled{opacity:.4;cursor:not-allowed}
 .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text);font-weight:500}
-.btn-outline:hover{border-color:var(--blue);color:var(--blue);opacity:1}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent);opacity:1}
 .btn-sm{padding:5px 12px;font-size:12px}
 .btn-danger{background:rgba(248,81,73,.15);border:1px solid rgba(248,81,73,.4);color:var(--red);font-weight:600}
 .btn-danger:hover{background:rgba(248,81,73,.25);opacity:1}
@@ -196,7 +198,7 @@ select.inp{cursor:pointer}
   border:1px solid var(--border);border-radius:20px;
   padding:3px 10px;font-size:11px;font-weight:600;color:var(--muted);
 }
-.chip.blue  {border-color:rgba(88,166,255,.5);color:var(--blue)}
+.chip.blue  {border-color:rgba(245,158,11,.5);color:var(--accent)}
 .chip.green {border-color:rgba(63,185,80,.5);color:var(--green)}
 .chip.purple{border-color:rgba(188,140,255,.5);color:var(--purple)}
 .chip.yellow{border-color:rgba(210,153,34,.5);color:var(--yellow)}
@@ -278,7 +280,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
     </div>
     <div class="pill" id="modelPill" style="display:none">
       <span style="color:var(--muted);font-size:11px">model:</span>
-      <span id="currentModel" style="color:var(--blue);font-weight:600">—</span>
+      <span id="currentModel" style="color:var(--accent);font-weight:600">—</span>
     </div>
     <span class="tag">v2.0</span>
   </div>
@@ -647,7 +649,7 @@ function setBar(barId, amtId, spent, limit) {
 /* ════════════════════════════════════════════
    CHARTS
 ════════════════════════════════════════════ */
-const CHART_COLORS = ['#58a6ff','#bc8cff','#3fb950','#d29922','#f0883e','#f85149'];
+const CHART_COLORS = ['#f59e0b','#a78bfa','#34d399','#60a5fa','#fb923c','#f87171'];
 const CHART_OPTS   = {
   plugins:{ legend:{ labels:{ color:'#8b949e', font:{ size:12 }, padding:12 }, position:'right' } },
   maintainAspectRatio: false,
@@ -676,7 +678,7 @@ function buildCacheChart(ec, sc) {
       labels: ['Exact Hit','Semantic Hit','Miss'],
       datasets:[{
         data: [exact, sem, misses],
-        backgroundColor: ['#3fb950','#bc8cff','#6e7681'],
+        backgroundColor: ['#34d399','#a78bfa','#64748b'],
         borderRadius: 5, borderWidth: 0,
       }],
     },
@@ -849,7 +851,7 @@ async function runCompare() {
             <span class="mono">${fmt$(info.estimated_cost_usd)}</span>
           </div>
           <div class="bar-track" style="height:8px">
-            <div class="bar-fill ok" style="width:${Math.max(pct,2)}%;background:${isPro?'var(--purple)':'var(--blue)'}"></div>
+            <div class="bar-fill ok" style="width:${Math.max(pct,2)}%;background:${isPro?'var(--purple)':'var(--accent)'}"></div>
           </div>
         </div>`;
       }).join('')}
