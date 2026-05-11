@@ -120,9 +120,9 @@ uvicorn app.main:app --reload
 
 ## Testing
 
-The test suite covers 37 tests across 5 modules using pytest.
+The test suite covers 73 tests across 6 modules using pytest.
 
-```
+```bash
 python -m pytest tests/ -v
 ```
 
