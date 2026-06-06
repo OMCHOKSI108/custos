@@ -1,7 +1,6 @@
 # Custos
 
 [![Live API](https://img.shields.io/badge/API-custos--lqtf.onrender.com-gold?logo=render)](https://custos-lqtf.onrender.com/docs)
-[![Tests](https://github.com/OMCHOKSI108/custos/actions/workflows/test.yml/badge.svg)](https://github.com/OMCHOKSI108/custos/actions)
 [![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-green.svg)](https://fastapi.tiangolo.com/)
 [![Deployed on Render](https://img.shields.io/badge/deployed-Render-purple.svg)](https://render.com)
