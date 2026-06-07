@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  custos:
+    build: .
+    container_name: custos-gateway
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - MOCK_MODE=false
+    volumes:
+      - ./logs:/app/logs
+      - ./models:/app/models
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s

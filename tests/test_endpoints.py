@@ -9,6 +9,7 @@ import os, sys, time, json
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 os.environ["MOCK_MODE"] = "true"
+os.environ["LLM_PROVIDER"] = "gemini"
 
 import pytest
 from app.router import LLMRouter

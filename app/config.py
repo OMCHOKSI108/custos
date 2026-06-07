@@ -56,3 +56,6 @@ RETRY_BASE_DELAY = float(os.getenv("RETRY_BASE_DELAY", "2.0"))
 
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "gemini").lower()
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
+
+CUSTOS_API_KEY = os.getenv("CUSTOS_API_KEY", "")
+CORS_ORIGINS = os.getenv("CORS_ORIGINS", "*")

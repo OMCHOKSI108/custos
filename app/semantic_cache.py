@@ -37,7 +37,13 @@ GRACEFUL FALLBACK:
 import time
 import math
 from typing import Optional, Dict, List, Any
-from app.config import SEMANTIC_SIMILARITY_THRESHOLD, CACHE_TTL_SECONDS, CACHE_MAX_SIZE
+from app.config import (
+    SEMANTIC_SIMILARITY_THRESHOLD,
+    CACHE_TTL_SECONDS,
+    CACHE_MAX_SIZE,
+    SIMPLE_THRESHOLD,
+    COMPLEX_THRESHOLD,
+)
 
 # Try importing - graceful fallback if not installed
 try:
@@ -55,6 +61,16 @@ def _cosine_similarity(a: List[float], b: List[float]) -> float:
     if mag_a == 0 or mag_b == 0:
         return 0.0
     return dot / (mag_a * mag_b)
+
+
+def _get_complexity_band(score: float) -> str:
+    """Map a complexity score to a band for cache partitioning."""
+    if score <= SIMPLE_THRESHOLD:
+        return "simple"
+    elif score <= COMPLEX_THRESHOLD:
+        return "medium"
+    else:
+        return "complex"
 
 
 class SemanticCache:
@@ -106,10 +122,15 @@ class SemanticCache:
             if (now - e["stored_at"]) <= self.ttl
         ]
 
-    def get(self, query: str) -> Optional[Dict]:
+    def get(self, query: str, complexity_score: float = None) -> Optional[Dict]:
         """
         Find the most similar cached entry.
         Returns entry dict if similarity ≥ threshold, else None.
+
+        If complexity_score is provided, only entries in the same complexity
+        band (simple/medium/complex) are considered. This prevents cross-
+        contamination between e.g. 'Explain Python for beginners' (simple)
+        and 'Explain Python memory management deeply' (complex).
         """
         if not self.enabled:
             self.misses += 1
@@ -125,10 +146,17 @@ class SemanticCache:
             self.misses += 1
             return None
 
+        # Determine complexity band for filtering
+        query_band = _get_complexity_band(complexity_score) if complexity_score is not None else None
+
         # Linear scan — fast enough up to ~500 entries
         best_score = 0.0
         best_entry = None
         for entry in self._entries:
+            # Skip entries from different complexity bands
+            if query_band and entry.get("complexity_band") and entry["complexity_band"] != query_band:
+                continue
+
             score = _cosine_similarity(query_emb, entry["embedding"])
             if score > best_score:
                 best_score = score
@@ -141,8 +169,8 @@ class SemanticCache:
         self.misses += 1
         return None
 
-    def set(self, query: str, response: str, model: str, cost: float = 0.0):
-        """Store a new semantic cache entry."""
+    def set(self, query: str, response: str, model: str, cost: float = 0.0, complexity_score: float = None):
+        """Store a new semantic cache entry with optional complexity band."""
         if not self.enabled:
             return
 
@@ -154,14 +182,18 @@ class SemanticCache:
         if len(self._entries) >= self.max_size:
             self._entries.pop(0)
 
-        self._entries.append({
+        entry = {
             "embedding":  emb,
             "response":   response,
             "model":      model,
             "cost":       cost,
             "query":      query[:200],   # store preview for debugging
             "stored_at":  time.time(),
-        })
+        }
+        if complexity_score is not None:
+            entry["complexity_band"] = _get_complexity_band(complexity_score)
+
+        self._entries.append(entry)
 
     def clear(self):
         self._entries.clear()

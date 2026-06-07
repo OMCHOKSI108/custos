@@ -208,7 +208,7 @@ class LLMRouter:
                 "provider": active_provider,
             }
 
-        sem_cached = self.semantic_cache.get(query)
+        sem_cached = self.semantic_cache.get(query, complexity_score=complexity_score)
         if sem_cached:
             latency_ms = (time.time() - start_time) * 1000
             self.logger.log(
@@ -292,7 +292,7 @@ class LLMRouter:
 
         self.budget.record_cost(cost)
         self.exact_cache.set(query, model, llm_result["response"], cost)
-        self.semantic_cache.set(query, llm_result["response"], model, cost)
+        self.semantic_cache.set(query, llm_result["response"], model, cost, complexity_score=complexity_score)
 
         latency_ms = (time.time() - start_time) * 1000
         self.logger.log(

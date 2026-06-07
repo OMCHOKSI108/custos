@@ -19,9 +19,9 @@ ENDPOINTS:
 """
 
 import time
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse, JSONResponse
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 from typing import Optional
 from contextlib import asynccontextmanager
@@ -29,7 +29,8 @@ from contextlib import asynccontextmanager
 from app.router import LLMRouter
 from app.ml_router import MLRouter
 from app.budget import BudgetExceededError
-from app.config import MOCK_MODE, MODEL_COSTS, LLM_PROVIDER
+from app.config import MOCK_MODE, MODEL_COSTS, LLM_PROVIDER, CORS_ORIGINS
+from app.auth import verify_api_key
 
 
 class ChatRequest(BaseModel):
@@ -77,9 +78,12 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# Parse CORS origins from config
+_cors_origins = [o.strip() for o in CORS_ORIGINS.split(",")] if CORS_ORIGINS != "*" else ["*"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # tighten this in production
+    allow_origins=_cors_origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -98,7 +102,7 @@ async def health():
 
 
 @app.post("/chat")
-async def chat(req: ChatRequest):
+async def chat(req: ChatRequest, _key: str = Depends(verify_api_key)):
     """
     Main endpoint. Send a query, get an LLM response + full metadata.
 
@@ -153,7 +157,7 @@ async def history(limit: int = 50, user_id: Optional[str] = None):
 
 
 @app.get("/export/csv")
-async def export_csv():
+async def export_csv(_key: str = Depends(verify_api_key)):
     """Download the full request log as CSV."""
     content = router_instance.logger.export_csv_string()
     return StreamingResponse(
@@ -211,7 +215,7 @@ async def compare(query: str):
 
 
 @app.post("/train")
-async def train():
+async def train(_key: str = Depends(verify_api_key)):
     """
     Train the ML router on accumulated request logs.
     Needs ≥50 real (non-cached) requests first.
@@ -224,7 +228,7 @@ async def train():
 
 
 @app.post("/budget/configure")
-async def configure_budget(config: BudgetConfig):
+async def configure_budget(config: BudgetConfig, _key: str = Depends(verify_api_key)):
     """Update budget limits without restarting the server."""
     router_instance.budget.update_limits(
         daily=config.daily_budget_usd,
@@ -234,7 +238,7 @@ async def configure_budget(config: BudgetConfig):
 
 
 @app.delete("/cache")
-async def clear_cache():
+async def clear_cache(_key: str = Depends(verify_api_key)):
     """Clear both caches. Useful after updating prompts or for testing."""
     router_instance.exact_cache.clear()
     router_instance.semantic_cache.clear()

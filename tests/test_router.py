@@ -5,6 +5,7 @@ These test the whole flow end-to-end in mock mode.
 import sys, os
 sys.path.insert(0, ".")
 os.environ["MOCK_MODE"] = "true"
+os.environ["LLM_PROVIDER"] = "gemini"
 
 from app.router import LLMRouter
 from app.budget import BudgetExceededError

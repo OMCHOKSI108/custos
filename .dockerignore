@@ -1,0 +1,10 @@
+.venv
+venv
+.env
+__pycache__
+.pytest_cache
+.ruff_cache
+.git
+*.pyc
+logs/
+models/rf_router.pkl

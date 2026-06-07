@@ -38,7 +38,8 @@ GROQ_RETRY_BASE_DELAY = 2.0
 def init_groq(api_key: str):
     global _groq_client, GROQ_AVAILABLE, GROQ_API_KEY
     GROQ_API_KEY = api_key
-    if not api_key:
+    from app.config import MOCK_MODE
+    if MOCK_MODE or not api_key:
         GROQ_AVAILABLE = False
         return
     try:

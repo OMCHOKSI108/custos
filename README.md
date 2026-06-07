@@ -49,6 +49,8 @@ graph TD
 
 The request pipeline consists of six sequential stages. A query first passes through rate limiting and budget enforcement. It then undergoes complexity analysis using six weighted signals. The ML router selects the optimal model based on historical training data. Before reaching the Gemini API, the system checks two caching layers: an exact SHA-256 hash cache and a semantic similarity cache using sentence-transformers embeddings with a cosine similarity threshold.
 
+![Architecture Diagram](docs/architecture.png)
+
 > The semantic cache handles paraphrased queries. Asking "What is machine learning?" and "Explain ML" returns the same cached response, eliminating redundant API calls and reducing latency by up to 60 milliseconds per hit.
 
 ---
@@ -93,6 +95,7 @@ Create a .env file from the example template and add your Gemini API key. Keys a
 
 ```
 cp .env.example .env
+# Edit .env and add your API key(s)
 ```
 
 Launch the server with uvicorn and open the interactive API documentation at http://localhost:8000/docs.
@@ -346,10 +349,39 @@ custos/
     analytics.py      Pandas-based statistics aggregation
     logger.py         CSV-based request logging
     config.py         Environment variable configuration
+    auth.py           Optional API key authentication middleware
   tests/              Unit and integration test suite
   frontend/dashboard/ Browser-based dashboard with Chart.js
+  scripts/            Benchmark and utility scripts
+  docs/               Technical documentation and screenshots
   render.yaml         Render.com deployment configuration
+  Dockerfile          Production Docker image
+  docker-compose.yml  Docker Compose setup
+  .env.example        Environment variable template
 ```
+
+---
+
+## Limitations
+
+- **In-memory state**: Caches, rate limit windows, and budget buckets are stored in memory. They don't persist across restarts and can't be shared between instances.
+- **CSV logging**: Request logs are stored in CSV files. This works for single-instance deployments but isn't suitable for high-concurrency production with multiple workers.
+- **Semantic cache linear scan**: The semantic cache does a brute-force linear scan over all entries (O(n)). This is fast up to ~500 entries but would need FAISS or similar for larger deployments.
+- **Single-instance**: There is no distributed lock or shared state mechanism. Deploying multiple instances would result in separate caches and budget trackers.
+- **Heuristic routing**: The default complexity analyzer uses keyword matching and heuristics. It works well for common queries but can misroute edge cases. The ML router improves accuracy once trained.
+
+---
+
+## Future Improvements
+
+- **Redis integration** for distributed caching, rate limiting, and budget enforcement across multiple instances
+- **PostgreSQL/SQLite** for persistent, queryable request logging and analytics
+- **FAISS** for scalable semantic similarity search at >1K cached entries
+- **Multi-provider A/B testing** to compare model quality vs cost across providers
+- **Custom routing rules per user** (e.g., always use Pro for user X)
+- **Prometheus + Grafana** for production-grade observability
+- **Streaming responses** for real-time token delivery
+- **Request queuing** with priority-based scheduling during rate limit windows
 
 ---
 
